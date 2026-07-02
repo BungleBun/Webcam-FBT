@@ -21,9 +21,11 @@ Libraries:
     -OpenCV
     -Mediapipe
     -Numpy
+    -Time
+    -Python-OSC
     -TBD
 
-Framework:
+Frameworks:
     -TBD
 
 # How to run:
@@ -31,6 +33,8 @@ Framework:
 TBD (All the project does in this stage is turn on your webcam and display it in a small window, it doesn't even turn it off when you try to exit out of the window (from my experience). I fail to see why you would WANT to run it thus far.)
 
 # Update log:
+
+* 7/2/2026: Added Google's ML model and Mediapipe to track the coordinates of 33 different points on the user's body. Currently prints the coordinates, with plans to instead feed them into a game's OSC/Driver. Also added better documentation inside of the code.
 
 * 7/1/2026: This is my first real git contribution so I am just trying to get it out there with hopes of updating in the future.
 
