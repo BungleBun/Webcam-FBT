@@ -34,6 +34,8 @@ TBD (All the project does in this stage is turn on your webcam and display it in
 
 # Update log:
 
+* 7/3/2026: Added a local OSC client that speaks to VRChat's OSC server over port UDP/9000. Translates Mediapipe's coordinate data into something that VRChat can read as tracker position. Potential plans for a full-body tracking solution for desktop and even possibly mobile users.
+
 * 7/2/2026: Added Google's ML model and Mediapipe to track the coordinates of 33 different points on the user's body. Currently prints the coordinates, with plans to instead feed them into a game's OSC/Driver. Also added better documentation inside of the code.
 
 * 7/1/2026: This is my first real git contribution so I am just trying to get it out there with hopes of updating in the future.
