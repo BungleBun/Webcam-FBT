@@ -4,6 +4,11 @@ import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
+from pythonosc.udp_client import SimpleUDPClient
+
+#CREATE CLIENT FROM CREATE CLIENT FUNCTION
+from vrc_osc import create_client
+client = create_client()
 
 #MODEL PATH TO ML MODEL
 model_path = 'D:/PythonProjects/Webcam-FBT/pose_landmarker_heavy.task'
@@ -18,9 +23,95 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 #WEBCAM CAPTURE
 cap = cv2.VideoCapture(0)
 
+#TRACKING DATA FOR EACH TRACKER
+class TrackerData:
+    def __init__(self):
+        self.left_foot_x = 0.0
+        self.left_foot_y = 0.0
+        self.left_foot_z = 0.0
+
+        self.right_foot_x = 0.0
+        self.right_foot_y = 0.0
+        self.right_foot_z = 0.0
+
+        self.left_knee_x = 0.0
+        self.left_knee_y = 0.0
+        self.left_knee_z = 0.0
+
+        self.right_knee_x = 0.0
+        self.right_knee_y = 0.0
+        self.right_knee_z = 0.0
+
+        self.hips_x = 0.0
+        self.hips_y = 0.0
+        self.hips_z = 0.0
+
+        self.chest_x = 0.0
+        self.chest_y = 0.0
+        self.chest_z = 0.0
+
+        self.left_elbow_x = 0.0
+        self.left_elbow_y = 0.0
+        self.left_elbow_z = 0.0
+
+        self.right_elbow_x = 0.0
+        self.right_elbow_y = 0.0
+        self.right_elbow_z = 0.0
+
 #PRINTS THE COORDINATES (THIS FUNCTION WILL BE EDITED TO INSTEAD SEND THEM TO THE GAME OSC/DRIVER)
 def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
     print('pose landmarker result: {}'.format(result))
+
+    if result.pose_landmarks:
+        landmarks = result.pose_landmarks[0]
+#TRACKER POSITIONS/LANDMARKS
+#MAY NEED TO CHANGE FEET TO ANKLE POSITION
+
+        left_foot = landmarks[31]
+        right_foot = landmarks[32]
+        left_knee = landmarks[25]
+        right_knee = landmarks[26]
+        left_hip = landmarks[23]
+        right_hip = landmarks[24]
+        left_chest = landmarks[11]
+        right_chest = landmarks[12]
+        left_elbow = landmarks[13]
+        right_elbow = landmarks[14]
+
+        hips_x = (left_hip.x + right_hip.x) /2
+        hips_y = (left_hip.y + right_hip.y) / 2
+        hips_z = (left_hip.z + right_hip.z) / 2
+
+        chest_x = (left_chest.x + right_chest.x) / 2
+        chest_y = (left_chest.y + right_chest.y) / 2
+        chest_z = (left_chest.z + right_chest.z) / 2
+
+#CREATE FORMULA TO CALCULATE FOR ROLL, PITCH, AND YAW BASED ON X Y AND Z COORDINATES
+
+#SENDS POSITION DATA TO VRCHAT OSC
+        client.send_message("/tracking/trackers/1/position",
+                            [left_foot.x, left_foot.y, left_foot.z])  # Position
+        client.send_message("/tracking/trackers/1/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/2/position",
+                            [right_foot.x, right_foot.y, right_foot.z])  # Position
+        client.send_message("/tracking/trackers/2/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/3/position",
+                            [left_knee.x, left_knee.y, left_knee.z])  # Position
+        client.send_message("/tracking/trackers/3/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/4/position",
+                            [right_knee.x, right_knee.y, right_knee.z])  # Position
+        client.send_message("/tracking/trackers/4/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/5/position", [hips_x, hips_y, hips_z])  # Position
+        client.send_message("/tracking/trackers/5/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/6/position",
+                            [chest_x, chest_y, chest_z])  # Position
+        client.send_message("/tracking/trackers/6/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/7/position",
+                            [left_elbow.x, left_elbow.y, left_elbow.z])  # Position
+        client.send_message("/tracking/trackers/7/rotation", 'PLACEHOLDERVALUE')  # Rotation
+        client.send_message("/tracking/trackers/8/position",
+                            [right_elbow.x, right_elbow.y, right_elbow.z])  # Position
+        client.send_message("/tracking/trackers/8/rotation", 'PLACEHOLDERVALUE')  # Rotation
 
 #SETTINGS AND SPECS FOR THE MODEL
 options = PoseLandmarkerOptions(
