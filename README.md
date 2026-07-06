@@ -30,9 +30,11 @@ Frameworks:
 
 # How to run:
 
-TBD (All the project does in this stage is turn on your webcam and display it in a small window, it doesn't even turn it off when you try to exit out of the window (from my experience). I fail to see why you would WANT to run it thus far.)
+This project is a work in progress.  It currently runs. Not in any way it is supposed to, but by all technicality it is functional. However, I do reccomend waiting for the finished product. Because as of current, upon testing my avatar looks like spaghetti and while calibrating stands a frightening, tiny, upside-down ping pong man.  
 
 # Update log:
+
+* 7/6/2026: Using X, Y, and Z tracking coordinates and arctan2 was able to dynamically solve for tracker rotation angles. Officially tested on my VR headset and although some minor scale and rotation bugs need to be repaired before it is useable, it reads, translates, and sends data, and VRChat receives it (almost) perfectly. 
 
 * 7/3/2026: Added a local OSC client that speaks to VRChat's OSC server over port UDP/9000. Translates Mediapipe's coordinate data into something that VRChat can read as tracker position. Potential plans for a full-body tracking solution for desktop and even possibly mobile users.
 

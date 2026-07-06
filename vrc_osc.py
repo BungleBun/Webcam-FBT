@@ -2,8 +2,9 @@ from pythonosc.udp_client import SimpleUDPClient
 
 def create_client():
     ip = '127.0.0.1'
-    port = 5005
+    port = 9000 #This used to say port 5005, and I have 0 idea where I came to that conclusion. I'm 89% sure it's port 9000
     udp_client = SimpleUDPClient(ip, port)
+    return udp_client
 
 #/tracking/trackers/1/position
 #/tracking/trackers/1/rotation
