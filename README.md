@@ -30,9 +30,11 @@ Frameworks:
 
 # How to run:
 
-This project is a work in progress.  It currently runs. Not in any way it is supposed to, but by all technicality it is functional. However, I do reccomend waiting for the finished product. Because as of current, upon testing my avatar looks like spaghetti and while calibrating stands a frightening, tiny, upside-down ping pong man.  
+This project is a work in progress.  It currently runs. Not in any way it is supposed to, but by all technicality it is functional. However, I do reccomend waiting for the finished product. Because as of current, upon testing my avatar looks like spaghetti and while calibrating stands a frightening, tiny, upside-down ping pong man. (Update: The frightening, tiny, upside-down, ping pong man is no longer upside-down. Now he is just frightening and tiny.)  
 
 # Update log:
+
+* 7/8/2026: Reversed Mediapipe's outputted coordinates to accurately calibrate and track the user's body to their in game avatar. Removed broken code.
 
 * 7/6/2026: Using X, Y, and Z tracking coordinates and arctan2 was able to dynamically solve for tracker rotation angles. Officially tested on my VR headset and although some minor scale and rotation bugs need to be repaired before it is useable, it reads, translates, and sends data, and VRChat receives it (almost) perfectly. 
 

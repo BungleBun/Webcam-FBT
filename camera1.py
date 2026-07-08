@@ -63,8 +63,23 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
     #print('pose landmarker result: {}'.format(result))
     global client
 
+#FLIPS X Y AND Z AXIS TO THE CORRECT POSITION
     if result.pose_landmarks:
-        landmarks = result.pose_landmarks[0]
+
+        class PointLandmark:
+            def __init__(self, x, y, z):
+                self.x = x
+                self.y = y
+                self.z = z
+
+        landmarks = []
+
+        for lm in result.pose_landmarks[0]:
+            flipped_x = 1.0 - lm.x
+            flipped_y = 1.0 - lm.y
+            flipped_z = 1.0 - lm.z
+            landmarks.append(PointLandmark(flipped_x, flipped_y, flipped_z))
+
 #TRACKER POSITIONS/LANDMARKS
 #MAY NEED TO CHANGE FEET TO ANKLE POSITION
 
@@ -94,17 +109,16 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
         chest_y = (left_chest.y + right_chest.y) / 2
         chest_z = (left_chest.z + right_chest.z) / 2
 
-#CREATE FORMULA TO CALCULATE FOR ROLL, PITCH, AND YAW BASED ON X Y AND Z COORDINATES
 
 #LEFT FOOT ROTATION FORMULA
         #DIFFERENCE BETWEEN LEFT FOOT AND LEFT HEEL
         dx_left_foot = left_foot.x - left_heel.x
-        dy_left_foot = -(left_foot.y - left_heel.y)
+        dy_left_foot = left_foot.y - left_heel.y #MADE POSITIVE FOR TESTING
         dz_left_foot = left_foot.z - left_heel.z
 
         #DIFFERENCE BETWEEN LEFT HEEL AND LEFT ANKLE
         dx_left_ankle = left_heel.x - left_ankle.x
-        dy_left_ankle = -(left_heel.y - left_ankle.y)
+        dy_left_ankle = left_heel.y - left_ankle.y #MADE POSITIVE FOR TESTING
         dz_left_ankle = left_heel.z - left_ankle.z
 
         #FLOOR LENGTH DISTANCE BETWEEN HEEL AND TOE
@@ -124,12 +138,12 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 # RIGHT FOOT ROTATION FORMULA
         # DIFFERENCE BETWEEN RIGHT FOOT AND RIGHT HEEL
         dx_right_foot = right_foot.x - right_heel.x
-        dy_right_foot = -(right_foot.y - right_heel.y)
+        dy_right_foot = right_foot.y - right_heel.y #MADE POSITIVE FOR TESTING
         dz_right_foot = right_foot.z - right_heel.z
 
         # DIFFERENCE BETWEEN LEFT HEEL AND LEFT ANKLE
         dx_right_ankle = right_heel.x - right_ankle.x
-        dy_right_ankle = -(right_heel.y - right_ankle.y)
+        dy_right_ankle = right_heel.y - right_ankle.y #MADE POSITIVE FOR TESTING
         dz_right_ankle = right_heel.z - right_ankle.z
 
         # FLOOR LENGTH DISTANCE BETWEEN HEEL AND TOE
@@ -149,12 +163,12 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 # LEFT KNEE ROTATION FORMULA
         #DIFFERENCE BETWEEN LEFT KNEE AND LEFT HIP
         dx_left_thigh = left_knee.x - left_hip.x
-        dy_left_thigh = -(left_knee.y - left_hip.y)
+        dy_left_thigh = left_knee.y - left_hip.y #MADE POSITIVE FOR TESTING
         dz_left_thigh = left_knee.z - left_hip.z
 
         #DIFFERENCE BETWEEN LEFT KNEE AND LEFT ANKLE
         dx_left_shin = left_ankle.x - left_knee.x
-        dy_left_shin = -(left_ankle.y - left_knee.y)
+        dy_left_shin = left_ankle.y - left_knee.y #MADE POSITIVE FOR TESTING
         dz_left_shin = left_ankle.z - left_knee.z
 
         #FLOOR LANGTH BETWEEN THIGH
@@ -171,12 +185,12 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 # RIGHT KNEE ROTATION FORMULA
         # DIFFERENCE BETWEEN RIGHT KNEE AND RIGHT HIP
         dx_right_thigh = right_knee.x - right_hip.x
-        dy_right_thigh = -(right_knee.y - right_hip.y)
+        dy_right_thigh = right_knee.y - right_hip.y #MADE POSITIVE FOR TESTING
         dz_right_thigh = right_knee.z - right_hip.z
 
         # DIFFERENCE BETWEEN RIGHT KNEE AND RIGHT ANKLE
         dx_right_shin = right_ankle.x - right_knee.x
-        dy_right_shin = -(right_ankle.y - right_knee.y)
+        dy_right_shin = right_ankle.y - right_knee.y #MADE POSITIVE FOR TESTING
         dz_right_shin = right_ankle.z - right_knee.z
 
         # FLOOR LANGTH BETWEEN THIGH
@@ -192,12 +206,12 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 # HIPS ROTATION FORMULA
         #DIFFERENCE BETWEEN LEFT HIP AND RIGHT HIP
         dx_pelvis = left_hip.x - right_hip.x
-        dy_pelvis = -(left_hip.y - right_hip.y)
+        dy_pelvis = left_hip.y - right_hip.y #MADE POSITIVE FOR TESTING
         dz_pelvis = left_hip.z - right_hip.z
 
         #DIFFERENCE BETWEEN HIPS AND CHEST
         dx_hips_spine = chest_x - hips_x
-        dy_hips_spine = -(chest_y - hips_y)
+        dy_hips_spine = chest_y - hips_y #MADE POSITIVE FOR TESTING
         dz_hips_spine = chest_z - hips_z
 
         #FLOOR LENGTH BETWEEN SPINE
@@ -214,12 +228,12 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 # CHEST ROTATION FORMULA
         #DIFFERENCE BETWEEN CHEST
         dx_chest = left_chest.x - right_chest.x
-        dy_chest = -(left_chest.y - right_chest.y)
+        dy_chest = left_chest.y - right_chest.y #MADE POSITIVE FOR TESTING
         dz_chest = left_chest.z - right_chest.z
 
         #DIFFERENCE BETWEEN CHEST AND HIPS
         dx_chest_spine = chest_x - hips_x
-        dy_chest_spine = -(chest_y - hips_y)
+        dy_chest_spine = chest_y - hips_y #MADE POSITIVE FOR TESTING
         dz_chest_spine = chest_z - hips_z
 
         #FLOOR LENGTH BETWEEN SPINE
@@ -236,7 +250,7 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 #LEFT ELBOW ROTATION FORMULA
         #DIFFERENCE BETWEEN CHEST AND ELBOW
         dx_left_bicep = left_elbow.x - left_chest.x
-        dy_left_bicep = -(left_elbow.y - left_chest.y)
+        dy_left_bicep = left_elbow.y - left_chest.y #MADE POSITIVE FOR TESTING
         dz_left_bicep = left_elbow.z - left_chest.z
 
         #I THINK I CAN GET AWAY WITH JUST LETTING VRCHAT'S ENGINE TAKE OVER THE YAW AND ROLL BY MATCHING TO THE PLAYER'S CONTROLLER
@@ -251,7 +265,7 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 # RIGHT ELBOW ROTATION FORMULA
         # DIFFERENCE BETWEEN CHEST AND ELBOW
         dx_right_bicep = right_elbow.x - right_chest.x
-        dy_right_bicep = -(right_elbow.y - right_chest.y)
+        dy_right_bicep = right_elbow.y - right_chest.y #MADE POSITIVE FOR TESTING
         dz_right_bicep = right_elbow.z - right_chest.z
 
         # I THINK I CAN GET AWAY WITH JUST LETTING VRCHAT'S ENGINE TAKE OVER THE YAW AND ROLL BY MATCHING TO THE PLAYER'S CONTROLLER
