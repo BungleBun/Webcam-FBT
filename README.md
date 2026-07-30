@@ -34,6 +34,8 @@ This project is a work in progress.  It currently runs. Not in any way it is sup
 
 # Update log:
 
+* 7/29/2026: Attempted to find settings that match the scale of the players body, the tracking points, and the players avatar. So far... very unsuccessful. 
+
 * 7/8/2026: Reversed Mediapipe's outputted coordinates to accurately calibrate and track the user's body to their in game avatar. Removed broken code.
 
 * 7/6/2026: Using X, Y, and Z tracking coordinates and arctan2 was able to dynamically solve for tracker rotation angles. Officially tested on my VR headset and although some minor scale and rotation bugs need to be repaired before it is useable, it reads, translates, and sends data, and VRChat receives it (almost) perfectly. 

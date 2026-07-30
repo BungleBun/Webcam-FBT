@@ -5,6 +5,15 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+#GLOBAL CALIBRATION VARIABLES
+t_pose_start_time = None
+calibrated = False
+trigger_calibration = False
+scale_factor = 1.0
+offset_x = 0.0
+offset_y = 0.0
+offset_z = 0.0
+
 #CREATE CLIENT FROM CREATE CLIENT FUNCTION
 from vrc_osc import create_client
 client = create_client()
@@ -59,12 +68,10 @@ class TrackerData:
 
 #PRINTS THE COORDINATES (THIS FUNCTION WILL BE EDITED TO INSTEAD SEND THEM TO THE GAME OSC/DRIVER)
 def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
-    #CANCEL PRINTING FOR NOW TO DECREASE LAG, ONLY USE FOR DEGUBBING
-    #print('pose landmarker result: {}'.format(result))
-    global client
+    global client, calibrated, t_pose_start_time, scale_factor, offset_x, offset_y, offset_z
 
 #FLIPS X Y AND Z AXIS TO THE CORRECT POSITION
-    if result.pose_landmarks:
+    if result.pose_landmarks and len(result.pose_landmarks) > 0:
 
         class PointLandmark:
             def __init__(self, x, y, z):
@@ -74,11 +81,28 @@ def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp
 
         landmarks = []
 
-        for lm in result.pose_landmarks[0]:
-            flipped_x = 1.0 - lm.x
-            flipped_y = 1.0 - lm.y
-            flipped_z = 1.0 - lm.z
-            landmarks.append(PointLandmark(flipped_x, flipped_y, flipped_z))
+        #GRABS LANDMARKS TO CALCULATE SCALE
+        raw_lms = result.pose_landmarks[0]
+
+        #CALCULATES CAMERA WIDTH VIA SHOULDER POS
+        raw_shoulder_width = np.sqrt(
+            (raw_lms[11].x - raw_lms[12].x) ** 2 +
+            (raw_lms[11].z - raw_lms[12].z) ** 2
+        )
+
+        #CONVERTS CAMERA TO METERS BASED ON SHOULDERS
+        scale = 0.45 / raw_shoulder_width if raw_shoulder_width != 0 else 1.0
+
+        #I DON'T REMEMBER WHAT THIS DOES
+        raw_floor_y = max(raw_lms[27].y, raw_lms[28].y)
+
+        #RUNS SCALING
+        for lm in raw_lms:
+            scaled_x = (lm.x - 0.5) * scale
+            scaled_y = (raw_floor_y - lm.y) * scale
+            scaled_z = (lm.z - 0.5) * scale
+
+            landmarks.append(PointLandmark(scaled_x, scaled_y, scaled_z))
 
 #TRACKER POSITIONS/LANDMARKS
 #MAY NEED TO CHANGE FEET TO ANKLE POSITION
